@@ -36,11 +36,11 @@ class TwitterController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $userName = $form->getData()['user'];
-            $followersColletion = $connection->get('followers/list', ['screen_name' => $userName, 'count' => 25]);
-            if (isset($followersColletion->errors)) {
+            $followersCollection = $connection->get('followers/list', ['screen_name' => $userName, 'count' => 100]);
+            if (isset($followersCollection->errors)) {
                 $followers_array = [];
             } else {
-                $followers = $followersColletion->users;
+                $followers = $followersCollection->users;
                 $followers_array = [];
                 foreach ($followers as $follower) {
                     $followers_array[] = $follower->screen_name;

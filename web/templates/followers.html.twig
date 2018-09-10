@@ -7,7 +7,7 @@
             <div class="col-4 mx-auto">
                 <ul class="list-group">
                     <div class="my-3">
-                        <h2>Followers of {{ user }}: </h2>
+                        <h2>First 100 followers of {{ user }}: </h2>
                     </div>
                     {% for follower in followers %}
                         <li class="list-group-item">{{ follower }}</li>
@@ -20,8 +20,7 @@
             <div class="col-8 mx-auto">
                 <div class="my-3">
                     <h2 class="text-center"> No followers found for <span
-                                class="text-danger font-italic">{{ user }}</span>. Please, check
-                        user name and try again
+                                class="text-danger font-italic">{{ user }}</span>.
                     </h2>
                 </div>
             </div>
