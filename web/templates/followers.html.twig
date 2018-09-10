@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {% if followers %}
+        <div class="row">
+            <div class="col-4 mx-auto">
+                <ul class="list-group">
+                    <div class="my-3">
+                        <h2>Followers of {{ user }}: </h2>
+                    </div>
+                    {% for follower in followers %}
+                        <li class="list-group-item">{{ follower }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-8 mx-auto">
+                <div class="my-3">
+                    <h2 class="text-center"> No followers found for <span
+                                class="text-danger font-italic">{{ user }}</span>. Please, check
+                        user name and try again
+                    </h2>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div class="row">
+        <div class="my-5 mx-auto">
+            <a class="btn btn-primary" href="/followers">Go Back</a>
+        </div>
+    </div>
+{% endblock %}
