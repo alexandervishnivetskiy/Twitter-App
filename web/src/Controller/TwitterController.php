@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\FollowerManager;
 
 class TwitterController extends Controller
 {
@@ -23,33 +24,22 @@ class TwitterController extends Controller
      */
     public function showUsersFollowers(Request $request)
     {
-        $connection = new TwitterOAuth(self::CONSUMER_KEY, self::CONSUMER_SECRET, self::ACCESS_TOKEN, self::ACCESS_TOKEN_SECRET);
-
-        $content = $connection->get("account/verify_credentials");
+        $followerManager = new FollowerManager();
+        $followerManager->createConnection();
+        $content = $followerManager->connection->get("account/verify_credentials");
 
         $form = $this->createFormBuilder()
-            ->add('user', TextType::class, array('label' => 'Please, enter the correct user name', 'attr' => array('class' => 'form-control mb-3')))
-            ->add('submit', SubmitType::class, array('attr' => array('class' => 'form-control mt-3 bg-success')))
-            ->getForm();
+        ->add('user', TextType::class, array('label' => 'Please, enter the correct user name', 'attr' => array('class' => 'form-control mb-3')))
+        ->add('submit', SubmitType::class, array('attr' => array('class' => 'form-control mt-3 bg-success')))
+        ->getForm();
 
-        $form->handleRequest($request);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $userName = $form->getData()['user'];
-            $followersCollection = $connection->get('followers/list', ['screen_name' => $userName, 'count' => 100]);
-            if (isset($followersCollection->errors)) {
-                $followers_array = [];
-            } else {
-                $followers = $followersCollection->users;
-                $followers_array = [];
-                foreach ($followers as $follower) {
-                    $followers_array[] = $follower->screen_name;
-                }
-            }
-            return $this->render('followers.html.twig', array('followers' => $followers_array, 'user' => $userName));
-        }
-        return $this->render('index.html.twig', array('form' => $form->createView()));
-
-
+    if ($form->isSubmitted() && $form->isValid()) {
+        $userName = $form->getData()['user'];
+        $followers_array = $followerManager->getFollowers($userName);
+        return $this->render('followers.html.twig', array('followers' => $followers_array, 'user' => $userName));
+    }
+    return $this->render('index.html.twig', array('form' => $form->createView()));
     }
 }
