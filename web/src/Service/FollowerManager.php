@@ -6,29 +6,39 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 
 class FollowerManager
 {
-    const CONSUMER_KEY = '4ftZZMa1WBvx4liHEBGFAVETA';
-    const CONSUMER_SECRET = 'GzrFUrBpthwcVGDeL3KUIIvRSaMj3d3ar1WgGpLWpwGp4Rx6R2';
-    const ACCESS_TOKEN = '984044831398858752-ep8j3tiS8igyochCIGtlhoiRbPxKwA1';
-    const ACCESS_TOKEN_SECRET = 'JjsHv6JjSOAVpYBA78jXPfGKcq04mvqv2e5tbBeH7LRRk';
+    protected $consumer_key;
+    protected $consumer_secret;
+    protected $access_token;
+    protected $access_token_secret;
 
     public $connection;
     public $count;
     public $showedFollowerCount;
+    public $followersCollection;
 
-    public function __construct($count)
+    public function __construct($count, $consumer_key, $consumer_secret, $access_token, $access_token_secret)
     {
         $this->count = $count;
+        $this->consumer_key = $consumer_key;
+        $this->consumer_secret = $consumer_secret;
+        $this->access_token = $access_token;
+        $this->access_token_secret = $access_token_secret;
     }
 
     public function createConnection()
     {
-        $this->connection = new TwitterOAuth(self::CONSUMER_KEY, self::CONSUMER_SECRET, self::ACCESS_TOKEN, self::ACCESS_TOKEN_SECRET);
+        $this->connection = new TwitterOAuth($this->consumer_key, $this->consumer_secret, $this->access_token, $this->access_token_secret);
     }
 
-    public function getFollowers($userName)
+    public function getFollowerCollection($userName, $cursor = -1)
     {
-        $followersCollection = $this->connection->get('followers/list', ['screen_name' => $userName, 'count' => $this->count]);
+        $this->followersCollection = $this->connection->get('followers/list', ['screen_name' => $userName, 'cursor' => $cursor, 'count' => $this->count]);
+        return $this->followersCollection;
+    }
 
+    public function getFollowers()
+    {
+        $followersCollection = $this->followersCollection;
         if (isset($followersCollection->errors)) {
             $followers_array = [];
         } else {
@@ -38,7 +48,6 @@ class FollowerManager
                 $followers_array[] = $follower->screen_name;
             }
         }
-
         $followersCount = count($followers);
         $this->showedFollowerCount = ($followersCount < $this->count) ? $followersCount : $this->count;
 
