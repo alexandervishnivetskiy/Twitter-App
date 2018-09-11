@@ -20,23 +20,5 @@ class TwitterController extends Controller
     /**
      * @Route("/followers")
      */
-    public function showUsersFollowers(Request $request, FollowerManager $followerManager)
-    {
 
-        $followerManager->createConnection();
-
-        $form = $this->createFormBuilder()
-            ->add('user', TextType::class, array('label' => 'Please, enter the correct user name', 'attr' => array('class' => 'form-control mb-3')))
-            ->add('submit', SubmitType::class, array('attr' => array('class' => 'form-control mt-3 bg-success')))
-            ->getForm();
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $userName = $form->getData()['user'];
-            $followers_array = $followerManager->getFollowers($userName);
-            return $this->render('followers.html.twig', array('followers' => $followers_array, 'user' => $userName, 'count' => $followerManager->showedFollowerCount));
-        }
-        return $this->render('index.html.twig', array('form' => $form->createView()));
-    }
 }
